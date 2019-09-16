@@ -4,6 +4,7 @@ import  shelve
 from configobj import ConfigObj
 from subprocess import Popen, PIPE, call
 from lib.ui.formwidget import *
+from lib.datetimehandler import DateUtility
 #TODO Need to be removed after implementation dscontroller finised
 
 from lib import  constant as const
@@ -49,6 +50,7 @@ class DataSource(QDialog):
             pass
         self.__data= None
         self.ui = self.__ui
+        self.dateutil = DateUtility()
         self.dialog = self.makedialog
         self.idialog = self.makedialog
         self.ilayout = QFormLayout()

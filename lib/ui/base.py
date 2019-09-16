@@ -24,14 +24,7 @@ class MainWindow(QMainWindow):
         self.plot=Plotter()
         self.plot.setMinimumHeight(600)
         self.linelist = LineFeather(self)
-        self.todaymark = InfiniteLine(angle=90,movable=False, pos=(self.dateutil.currentepoch()),name="Now", pen="g")
-        self.todaymark.setFocus()
-        self.plot._plt.addItem(self.todaymark,ignoreBounds=True)
-        self.plot.region.setRegion([int(self.dateutil.currentepoch()-7200),int(self.dateutil.currentepoch()+36000)])
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.updateUI)
-        self.timer.setInterval(10)
-        self.timer.start(50)
+        
         self.status = StatusBar()
         self.setStatusBar(self.status)
         self.statuslayout = QHBoxLayout()
@@ -76,9 +69,7 @@ class MainWindow(QMainWindow):
         self.dock.setWidget(self.tab)
         self.addDockWidget(Qt.LeftDockWidgetArea,self.dock)
         self.setCentralWidget(self.__maindisplay)
-    def updateUI(self):
-        self.todaymark.setPos(self.dateutil.currentepoch())
-        #print self.todaymark.getPos()
+    
     @property
     def xaxis(self):
         ax = DateAxis(orientation='bottom')

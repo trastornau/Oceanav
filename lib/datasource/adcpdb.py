@@ -8,7 +8,7 @@ from lib.ui.linelist import *
 from threading import Thread, Event
 from lib.datasource.datasource import DataSource
 from lib.pytidalyse import Tidalyse
-from lib.datetimehandler import DateUtility
+
 
 
 class ADCPDB(DataSource):
@@ -29,7 +29,7 @@ class ADCPDB(DataSource):
 
     def __init__(self,parent=None):
         DataSource.__init__(self,parent)
-        self.dateutil = DateUtility()
+        
         self.data  = None
     def importData(self):
         options = QFileDialog.DontResolveSymlinks | QFileDialog.ShowDirsOnly

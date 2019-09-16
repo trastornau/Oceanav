@@ -2,6 +2,7 @@
 import numpy as np
 import time
 from lib.datetimehandler import DateUtility
+from PyQt4.Qt import QTimer
 from lib.pyqtgraph import *
 from lib.ui.dateaxis import DateAxis
 __author__ = 'aco-nav'
@@ -55,15 +56,22 @@ class Plotter(GraphicsLayoutWidget):
         self.setBackground((0,0,0))
         self.dateutil = DateUtility()
         xaxis = DateAxis(orientation='bottom')
-        
-
         self._plt = self.addPlot(row=0,col=0,axisItems={'bottom':xaxis})
         self._plt.addLegend()
         self._plt.setLabel("left", "Degrees Relative to Orientation")
         self.region = LinearRegionItem()
         self._plt.addItem(self.region, ignoreBounds=True)
-        
         self.region.setZValue(10)
+        self.todaymark = InfiniteLine(angle=90,movable=False, pos=(self.dateutil.currentepoch()),name="Now", pen="g")
+        self.todaymark.setFocus()
+        self.plot._plt.addItem(self.todaymark,ignoreBounds=True)
+        self.plot.region.setRegion([int(self.dateutil.currentepoch()-7200),int(self.dateutil.currentepoch()+36000)])
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.updateUI)
+        self.timer.setInterval(10)
+        self.timer.start(50)
+        
+        
         self._plt.sigRangeChanged.connect(self.updateRegion)
         self._plt.setAutoVisible(y=True)
         self.label =LabelItem(justify='right')
@@ -92,7 +100,9 @@ class Plotter(GraphicsLayoutWidget):
             #    self.label.setText("<span style='font-size: 12pt'>x=%0.1f,   <span style='color: red'>y1=%0.1f</span>,   <span style='color: green'>y2=%0.1f</span>" % (mousePoint.x(), data1[index], data2[index]))
             self.vLine.setPos(mousePoint.x())
             self.hLine.setPos(mousePoint.y())
-
+    def updateUI(self):
+        self.todaymark.setPos(self.dateutil.currentepoch())
+        #print self.todaymark.getPos()
     def update(self):
         self.region.setZValue(10)
         minX, maxX = self.region.getRegion()
