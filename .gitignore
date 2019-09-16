@@ -1,0 +1,5 @@
+*.py[cod]
+*.idea
+*__pycache__
+*.csv
+*.ADCPDB
