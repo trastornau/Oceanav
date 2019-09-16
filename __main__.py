@@ -9,7 +9,7 @@ from configobj import ConfigObj
 from threading import  Thread
 from PyQt4.Qt import  QApplication
 from PyQt4 import QtGui
-from lib.ui.Utils import  *
+from lib.ui.Utils import utils, constituentdata, editpref
 from lib.ui.base import MainWindow
 from lib.pytidalyse import Tidalyse
 from lib.database import  dbapp
