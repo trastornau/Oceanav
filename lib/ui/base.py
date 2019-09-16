@@ -19,12 +19,10 @@ class MainWindow(QMainWindow):
         self.__config = ConfigObj("./config/seasnake.conf")
         self.setMinimumSize(QSize(int(self.__config['general']['win_width']),int(self.__config['general']['win_height'])))
         self.dateutil = DateUtility()
-        #print self.dateutil.todate(self.dateutil.currentepoch()), self.dateutil.currentepoch()
         self.plugins = []
         self.plot=Plotter()
         self.plot.setMinimumHeight(600)
         self.linelist = LineFeather(self)
-        
         self.status = StatusBar()
         self.setStatusBar(self.status)
         self.statuslayout = QHBoxLayout()

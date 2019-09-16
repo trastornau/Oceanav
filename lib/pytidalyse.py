@@ -9,6 +9,7 @@ from datetime import  datetime
 from datetime import timedelta
 from pytides.tide import Tide, d2r, r2d
 from pytides.constituent import  *
+from lib.datetimehandler import DateUtility
 
 
 class Tidalyse():
@@ -39,6 +40,7 @@ class Tidalyse():
         self.time = np.array(self.dtime[::20])
         self.xmag =xmagdata[::20,1] #np.array(xmagdata[::10,1])
         self.scale = scale
+        self.dateutil = DateUtility()
         self.days = int(days)
 
     @property
@@ -147,7 +149,8 @@ class Tidalyse():
         self.last_time = np.max(self.epochlist)
         for name, const in self.constituent.items():
             t0 = self.time.tolist()[0]
-            hours = self.prediction_interval * np.arange(self.days * 24 * 10)
+            hours =self.prediction_interval * np.arange(self.days * 24 * 10) #( (self.dateutil.currentepoch() - timedelta(seconds=t0) )/86400) 
+            print hours.shape, type(hours), type(self.dateutil.currentepoch()) , type(t0), timedelta(seconds=self.dateutil.currentepoch())
             self.times  = Tide._times(t0, hours)
             data = Tide.decompose(self.xmag, self.time.tolist(), None, None, self.constituent[name])
             try:

@@ -64,8 +64,8 @@ class Plotter(GraphicsLayoutWidget):
         self.region.setZValue(10)
         self.todaymark = InfiniteLine(angle=90,movable=False, pos=(self.dateutil.currentepoch()),name="Now", pen="g")
         self.todaymark.setFocus()
-        self.plot._plt.addItem(self.todaymark,ignoreBounds=True)
-        self.plot.region.setRegion([int(self.dateutil.currentepoch()-7200),int(self.dateutil.currentepoch()+36000)])
+        self._plt.addItem(self.todaymark,ignoreBounds=True)
+        self.region.setRegion([int(self.dateutil.currentepoch()-7200),int(self.dateutil.currentepoch()+36000)])
         self.timer = QTimer()
         self.timer.timeout.connect(self.updateUI)
         self.timer.setInterval(10)
@@ -85,7 +85,7 @@ class Plotter(GraphicsLayoutWidget):
         self._plt.addItem(self.label)
         self.vb = self._plt.vb
         self.region.sigRegionChanged.connect(self.update)
-        self.region.setRegion([int(self.dateutil.currentepoch()),int(self.dateutil.currentepoch()+18000)])
+        self.region.setRegion([int(self.dateutil.currentepoch()-18000),int(self.dateutil.currentepoch()+18000)])
         self._plt.scene().sigMouseMoved.connect(self.mouseMoved)
         self._plt.setXRange(int(self.dateutil.currentepoch()),int(self.dateutil.currentepoch()+18000), padding=0) 
     def updateRegion(self, window, viewRange):
