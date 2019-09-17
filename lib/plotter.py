@@ -82,7 +82,7 @@ class Plotter(GraphicsLayoutWidget):
         self.hLine = InfiniteLine(angle=0, movable=False, pen="r")
         self._plt.addItem(self.vLine, ignoreBounds=True)
         self._plt.addItem(self.hLine, ignoreBounds=True)
-        self._plt.addItem(self.label)
+        self.addItem(self.label)
         self.vb = self._plt.vb
         self.region.sigRegionChanged.connect(self.update)
         self.region.setRegion([int(self.dateutil.currentepoch()-18000),int(self.dateutil.currentepoch()+18000)])
@@ -93,9 +93,22 @@ class Plotter(GraphicsLayoutWidget):
         #self.region.setRegion(rgn)
     def mouseMoved(self, evt):
         #pos = evt  ## using signal proxy turns original arguments into a tuple
+        
+        
         if self._plt.sceneBoundingRect().contains(evt):
             mousePoint = self.vb.mapSceneToView(evt)
             index = int(mousePoint.x())
+            lbl =""
+            for n,it in enumerate(self._plt.items):
+                
+                if type(it) == PlotDataItem:
+                    print type(it)
+                    if index > 0 and index < len(it.getData()[1]):
+                        try:
+                           lbl = lbl+" %0.1f" % (it.getData()[1][index])
+                        except:
+                            lbl=lbl
+            self.label.setText("<span style='font-size: 12pt'>x=%0.1f</span><span style='color: red'>%s</span>" % (mousePoint.x(), lbl))
             #if index > 0 and index < len(data1):
             #    self.label.setText("<span style='font-size: 12pt'>x=%0.1f,   <span style='color: red'>y1=%0.1f</span>,   <span style='color: green'>y2=%0.1f</span>" % (mousePoint.x(), data1[index], data2[index]))
             self.vLine.setPos(mousePoint.x())

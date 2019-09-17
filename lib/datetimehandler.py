@@ -3,7 +3,7 @@ import numpy as np
 
 class DateUtility(object):
     def __init__(self, **kwargs):
-        
+        #Calculate TRINAV and Numpy epoch difference
         self.npdiff = (np.datetime64('1980-01-06T00:00:00Z','s')-np.datetime64('1970-01-01T00:00:00Z','s')).astype(datetime)#/np.timedelta64(1, 's')
         self.epoch = datetime(year=1980,month=1,day=6)
         self.moduletime = None
