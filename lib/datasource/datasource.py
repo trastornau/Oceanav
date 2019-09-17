@@ -32,7 +32,7 @@ class DataSource(QDialog):
     def __init__(self,parent = None ):
         QDialog.__init__(self,parent)
         self.parent = parent
-        self.datehandler = DateUtility(year=1980,month=6,day=2)
+        self.datehandler = DateUtility(year=1980,month=6,day=1)
         self.np = np
 
         self.config = ConfigObj(infile='./config/datasource.conf', indent_type='    ')

@@ -35,12 +35,13 @@ class Tidalyse():
     #     self.scale = scale
     #     self.days = int(days)
     def __init__(self, xmagdata=[], days = 10, shift=0, scale = 1):
-        self.epochlist = xmagdata[:,0]
+        #npdiff = (np.datetime64('1980-01-01T00:00:00Z','s')-np.datetime64('1970-01-01T00:00:00Z','s')).astype(datetime)#/np.timedelta64(1, 's')
+        self.epochlist = xmagdata[:,0] #+npdiff.total_seconds()
         self.dtime = np.asarray(self.epochlist, dtype='datetime64[s]')
         self.time = np.array(self.dtime[::20])
         self.xmag =xmagdata[::20,1] #np.array(xmagdata[::10,1])
         self.scale = scale
-        self.dateutil = DateUtility()
+        self.dateutil = DateUtility(year=1980,month=6,day=2)
         self.days = int(days)
 
     @property
@@ -149,8 +150,13 @@ class Tidalyse():
         self.last_time = np.max(self.epochlist)
         for name, const in self.constituent.items():
             t0 = self.time.tolist()[0]
-            hours =self.prediction_interval * np.arange(self.days * 24 * 10) #( (self.dateutil.currentepoch() - timedelta(seconds=t0) )/86400) 
-            print hours.shape, type(hours), type(self.dateutil.currentepoch()) , type(t0), timedelta(seconds=self.dateutil.currentepoch())
+            self.dateutil.add(t0)
+            self.days = self.days + (self.dateutil.currentepoch() - self.dateutil.getgpstime())/86400
+            #print self.dateutil.currentepoch(),self.dateutil.getgpstime(),  (self.dateutil.currentepoch() - self.dateutil.getgpstime())
+            hours =(self.prediction_interval * np.arange(self.days * 24 * 10))#self.dateutil.todate(self.dateutil.currentepoch())-t0
+
+            
+            #hours = hours + (self.time.tolist()[-1] - self.time.tolist()[0])/86400
             self.times  = Tide._times(t0, hours)
             data = Tide.decompose(self.xmag, self.time.tolist(), None, None, self.constituent[name])
             try:

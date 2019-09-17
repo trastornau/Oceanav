@@ -8,6 +8,7 @@ from threading import Thread
 import numpy as np
 from lib.pyqtgraph import *
 from lib.pytidalyse import Tidalyse
+from lib.datetimehandler import DateUtility
 
 
 
@@ -35,6 +36,7 @@ class LineFeather(QTableWidget):
         self.chkfpredict = QCheckBox("Plot Predicted Feather")
         self.chkplot.toggled.connect(partial(self.plotall,self.chkplot))
         self.chkfpredict.toggled.connect(partial(self.predictandplot,self.chkfpredict))
+        self.dateutil = DateUtility()
         self.TRINAVFeather()
         self.LineFeather = OrderedDict(
             [('Feather Fetched From TRINAV',self.filecheck),
@@ -88,6 +90,7 @@ class LineFeather(QTableWidget):
                 feather =np.loadtxt(lines,delimiter=',',skiprows=1)
                 row,col = feather.shape
                 preplot = feather[1,0]
+                xax = feather[:,2] + self.dateutil.npdiff.total_seconds()
                 fsp = feather[0,1]
                 lsp = feather[row-1,1]
                 brush =(0,255,0)
@@ -105,11 +108,11 @@ class LineFeather(QTableWidget):
                     brush =(0,255,0,alphavalue )
 
 
-                self.plotitem[val]=self.parent.plot.plotter.plot(feather[:,2],fth , pen=brush)
-                self.arrow[val] =CurvePoint(self.plotitem[val],pos=(float(feather[:,2].min())))
+                self.plotitem[val]=self.parent.plot.plotter.plot(xax,fth , pen=brush)
+                self.arrow[val] =CurvePoint(self.plotitem[val],pos=(float(xax.min())))
                 self.arrowlabel[val]=TextItem(anchor=(0,0))
                 self.arrowlabel[val].setText(str(int(preplot)))
-                self.arrowlabel[val].setPos(feather[:,2].min(), fth[0])
+                self.arrowlabel[val].setPos(xax.min(), fth[0])
                 self.arrowlabel[val].setParentItem(self.arrow[val])
                 self.parent.plot.plotter.addItem(self.arrow[val])
                 self.parent.plot.plotter.addItem(self.arrowlabel[val])
@@ -139,7 +142,7 @@ class LineFeather(QTableWidget):
                 with open(f) as fc:
                     lines  = fc.readlines()
                     fdata = np.loadtxt(lines,delimiter=',',skiprows=1)
-                    fepoch = np.stack([fdata[:,2], fdata[:,5]], axis=-1)
+                    fepoch = np.stack([fdata[:,2]+self.dateutil.npdiff.total_seconds(), fdata[:,5]], axis=-1)
                     
                     if not flag:
                         self.trinavfeather = fepoch

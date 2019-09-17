@@ -129,7 +129,7 @@ class ADCPDB(DataSource):
                     (date, time, sp, TempLabel, temp, PitchLabel, pitch, RollLabel, roll, headstr, unused) = re.split(
                         r'\s+', line)
                     (headLabel, heading) = headstr.split(':')
-                    self.datehandler.add(date, time)
+                    self.datehandler.add(datetime.strptime(' '.join([date,time]), "%d/%m/%y %H:%M:%S"))
                     self._data[self.datehandler.getgpstime()] = [int(sp), float(temp), float(pitch), float(roll), float(heading)]
                     # print "{} {} {} {}".format(self.datehandler.getdate(), time, heading, blockcount)
                 if 'UPtime' in line:
