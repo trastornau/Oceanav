@@ -3,7 +3,12 @@ import numpy as np
 
 class DateUtility(object):
     def __init__(self, **kwargs):
-        #Calculate TRINAV and Numpy epoch difference
+        """
+        Datetime utility
+        we need to correct the time epoch differences between numpy and trinav
+        trinav started from 06-01-1980 while numpy started from 01-01-1970
+        so we need to make correcttion value to it
+        """
         self.npdiff = (np.datetime64('1980-01-06T00:00:00Z','s')-np.datetime64('1970-01-01T00:00:00Z','s')).astype(datetime)#/np.timedelta64(1, 's')
         self.epoch = datetime(year=1980,month=1,day=6)
         self.moduletime = None

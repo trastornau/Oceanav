@@ -151,23 +151,12 @@ class Tidalyse():
         for name, const in self.constituent.items():
             t0 = self.time.tolist()[0]
             self.dateutil.add(t0)
-            self.days = self.days + (self.dateutil.currentepoch() - self.dateutil.getgpstime())/86400
-            #print self.dateutil.currentepoch(),self.dateutil.getgpstime(),  (self.dateutil.currentepoch() - self.dateutil.getgpstime())
-            hours =(self.prediction_interval * np.arange(self.days * 24 * 10))#self.dateutil.todate(self.dateutil.currentepoch())-t0
-
-            
-            #hours = hours + (self.time.tolist()[-1] - self.time.tolist()[0])/86400
+            hours =(self.prediction_interval * np.arange((self.days+(self.dateutil.currentepoch() - self.dateutil.getgpstime())/86400) * 24 * 10))
             self.times  = Tide._times(t0, hours)
             data = Tide.decompose(self.xmag, self.time.tolist(), None, None, self.constituent[name])
-            try:
-                
-                self.tidedata[name] = data
-                pred = self.tidedata[name].at(self.times)
-                self.predictiondata[name] = pred * self.scale
-            except:
-                print "RECOMPUTE DEBUG\n Constutuent: {}".format(self.constituent)
-                print " Value of self.tidedata {}\n Value of self.time {}\n".format(self.tidedata, self.time)
-                return
+            self.tidedata[name] = data
+            pred = self.tidedata[name].at(self.times)
+            self.predictiondata[name] = pred * self.scale
         return self.predictiondata
     def __shift_times(self, Dt, shift):
         return Dt + timedelta(minutes=shift)
@@ -218,24 +207,24 @@ class Tidalyse():
         c = 1
         t = self.__shift_times(self.times,self.shift)
         #dt64 = np.datetime64(np.array(t,dtype='datetime64[ns]'))
-        # Store time data back as float epoch
+        # Store time data back as float epoch np.array(t,dtype='datetime64[s]')
         ts = (
-                 np.array(t,dtype='datetime64[s]') - np.datetime64('1970-01-01T00:00:00Z')
-             ) / np.timedelta64(1, 's')#+self.last_time
-        #print t,ts
+                t.astype('datetime64[s]')  - np.datetime64('1970-01-01T00:00:00Z')
+             ) / np.timedelta64(1, 's')
+
 
         s=len(self.predictiondata.keys()) + 1
-        try:
-            el=len(self.predictiondata.values()[0])
-            tideitems = np.zeros((el,s),dtype=np.float)
-            tideitems[:, 0] = tideitems[:, 0] + ts
-            for val in self.predictiondata.values():
-                tideitems[:,c] = tideitems[:,c] + val
-                c+=1
-            return tideitems
-        except:
-            print "Value of prediction data\n",self.predictiondata
-            return np.zeros((2,2),dtype=np.float)
+        #try:
+        el=len(self.predictiondata.values()[0])
+        tideitems = np.zeros((el,s),dtype=np.float)
+        tideitems[:, 0] = tideitems[:, 0] + ts
+        for val in self.predictiondata.values():
+            tideitems[:,c] = tideitems[:,c] + val
+            c+=1
+        return tideitems
+        #except:
+        #    print "Value of prediction data\n",self.predictiondata
+        #    return np.zeros((2,2),dtype=np.float)
         
 
 
