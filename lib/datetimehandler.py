@@ -15,9 +15,45 @@ class DateUtility(object):
 
     def __call__(self, *args, **kwargs):
         return  self
-    
-    def add(self, t):
-        self.moduletime = t + self.npdiff#datetime.strptime(strtime, "%d/%m/%y %H:%M:%S")
+    def add(self, *args , **kwargs):
+        """
+        Set the date of the modules
+        params: dt
+        params: date and time 
+        
+        """
+        
+        if len(args) == 1:
+            if type(args[0]) == datetime:
+                    self.moduletime = args[0] + self.npdiff
+            else:
+                try:
+                    self.moduletime = datetime.strptime(args[0],"%d/%m/%y %H:%M:%S") + self.npdiff
+                except:
+                    raise("Wrong datetime string format, please use dd/mm/yyyy hh:mm:ss")
+                finally:
+                    self.moduletime = datetime.strptime(args[0],"%d/%m/%y %H:%M:%S") + self.npdiff
+        elif len(args) ==2:
+            self.moduletime = datetime.strptime(' '.join(args[0],args[1]),"%d/%m/%y %H:%M:%S") + self.npdiff
+        else:
+            if 'dt' in kwargs:
+                if type(kwargs['dt']) == datetime:
+                    self.moduletime = kwargs['dt'] + self.npdiff
+                else:
+                    try:
+                        self.moduletime = datetime.strptime(kwargs['dt'],"%d/%m/%y %H:%M:%S") + self.npdiff
+                    except:
+                        raise("Wrong datetime string format, please use dd/mm/yyyy hh:mm:ss")
+                    finally:
+                        self.moduletime = datetime.strptime(kwargs['dt'],"%d/%m/%y %H:%M:%S") + self.npdiff
+            elif 'date' in kwargs:
+                if 'time' in kwargs:
+                    self.moduletime = datetime.strptime(' '.join([kwargs['date'], kwargs['time']]),"%d/%m/%y %H:%M:%S") + self.npdiff
+                else:
+                    self.moduletime = datetime.strptime(' '.join([kwargs['date'], "00:00:00"]),"%d/%m/%y %H:%M:%S") + self.npdiff
+            else:
+                self.moduletime = datetime(year=1980, month=1, day=6) + self.npdiff
+        
     def roundtime(self,sec):
         interval = 360
         return sec - (sec % interval)

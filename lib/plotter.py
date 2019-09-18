@@ -102,7 +102,7 @@ class Plotter(GraphicsLayoutWidget):
             for n,it in enumerate(self._plt.items):
                 
                 if type(it) == PlotDataItem:
-                    print type(it)
+                    #print type(it)
                     if index > 0 and index < len(it.getData()[1]):
                         try:
                            lbl = lbl+" %0.1f" % (it.getData()[1][index])
