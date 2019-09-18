@@ -30,8 +30,8 @@ class MainWindow(QMainWindow):
         self.mainlayout= QFormLayout()
         self.mainlayout.expandingDirections()
         self.__maindisplay.setLayout(self.mainlayout)
-        self.mainlayout.addRow(self.linelist, self.plot)
-        self.mainlayout.addRow(self.linelist.chkplot,self.linelist.chkfpredict )
+        self.mainlayout.addRow(self.plot)
+        #self.mainlayout.addRow(self.linelist.chkPlotall,self.linelist.btnFeatherPredict )
         self.datapanel= QFormLayout()
         self.dslayout = QVBoxLayout()
         self.importerlayout = QVBoxLayout()
@@ -61,17 +61,14 @@ class MainWindow(QMainWindow):
         self.tab = QTabWidget()
         self.tab.addTab(self.importerdock, "Importer")
         self.tab.addTab(self.__build_dspanel,"Datasource")
-        self.tab.addTab(self.__build_dock, "Utilities")
+        self.tab.addTab(self.__build_linelist, "Trinav Feather")
         self.tab.addTab(self.__build_dock, "About")
         self.tab.setCurrentIndex(1)
         self.dock.setWidget(self.tab)
         self.addDockWidget(Qt.LeftDockWidgetArea,self.dock)
         self.setCentralWidget(self.__maindisplay)
     
-    @property
-    def xaxis(self):
-        ax = DateAxis(orientation='bottom')
-        return ax
+    
     def setPlugins(self,pluginarray=[]):
         self.plugins = pluginarray
     def btntrigger_click(self):
@@ -93,6 +90,16 @@ class MainWindow(QMainWindow):
             gblayout.addWidget(i)
         gblayout.addWidget(self.datasource.paramgb)
         gblayout.addWidget(self.btntrigger)
+        gb.setLayout(gblayout)
+        return gb
+    @property
+    def __build_linelist(self):
+        gb = QGroupBox()
+        gb.setAlignment(Qt.AlignCenter)
+        gblayout = QVBoxLayout()
+        gblayout.addWidget(self.linelist)
+        gblayout.addWidget(self.linelist.chkPlotall)#self.mainlayout.addRow(self.linelist.chkPlotall,self.linelist.btnFeatherPredict )
+        gblayout.addWidget(self.linelist.btnFeatherPredict)#self.mainlayout.addRow(self.linelist.chkPlotall,self.linelist.btnFeatherPredict )
         gb.setLayout(gblayout)
         return gb
     @property

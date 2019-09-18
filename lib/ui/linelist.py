@@ -32,10 +32,10 @@ class LineFeather(QTableWidget):
         self.filecheck = {}
         self.forpredict = {}
         self.trinavfeather = np.array([[0,0]])
-        self.chkplot = QCheckBox("Plot All TRINAV Feather")
-        self.chkfpredict = QCheckBox("Plot Predicted Feather")
-        self.chkplot.toggled.connect(partial(self.plotall,self.chkplot))
-        self.chkfpredict.toggled.connect(partial(self.predictandplot,self.chkfpredict))
+        self.chkPlotall = QCheckBox("Plot All TRINAV Feather")
+        self.btnFeatherPredict = QCheckBox("Predict Feather")
+        self.chkPlotall.toggled.connect(partial(self.plotall, self.chkPlotall))
+        self.btnFeatherPredict.toggled.connect(partial(self.predictandplot, self.btnFeatherPredict))
         self.dateutil = DateUtility()
         self.TRINAVFeather()
         self.LineFeather = OrderedDict(
@@ -63,7 +63,7 @@ class LineFeather(QTableWidget):
         self.horizontalHeader().resizeSection(0, 158)
         self.horizontalHeader().resizeSection(1, 80)
         self.setMinimumHeight(300)
-        self.setMaximumWidth(250)
+        self.setMaximumWidth(350)
         self.resizeRowsToContents()
         # add all widgets in Qtable 2 plugin
         Headers = []
@@ -107,20 +107,20 @@ class LineFeather(QTableWidget):
                     brush =(0,255,0,alphavalue )
 
 
-                self.plotitem[val]=self.parent.plot.plotter.plot(xax,fth , pen=brush)
+                self.plotitem[val]=self.parent.plot.fplot.plot(xax, fth, pen=brush)
                 self.arrow[val] =CurvePoint(self.plotitem[val],pos=(float(xax.min())))
                 self.arrowlabel[val]=TextItem(anchor=(0,0))
                 self.arrowlabel[val].setText(str(int(preplot)))
                 self.arrowlabel[val].setPos(xax.min(), fth[0])
                 self.arrowlabel[val].setParentItem(self.arrow[val])
-                self.parent.plot.plotter.addItem(self.arrow[val])
-                self.parent.plot.plotter.addItem(self.arrowlabel[val])
+                self.parent.plot.fplot.addItem(self.arrow[val])
+                self.parent.plot.fplot.addItem(self.arrowlabel[val])
 
             f.close()
         else:
-            self.parent.plot.plotter.removeItem(self.plotitem[val])
-            self.parent.plot.plotter.removeItem(self.arrow[val])
-            self.parent.plot.plotter.removeItem(self.arrowlabel[val])
+            self.parent.plot.fplot.removeItem(self.plotitem[val])
+            self.parent.plot.fplot.removeItem(self.arrow[val])
+            self.parent.plot.fplot.removeItem(self.arrowlabel[val])
             del self.forpredict[val]
 
     def getshift(self):
@@ -161,10 +161,10 @@ class LineFeather(QTableWidget):
             pf.recompute()
             
             
-            self.plotitem["Predicted Feather"]=self.parent.plot.plotter.plot(pf.feather , pen=(255,80,125 ))
+            self.plotitem["Predicted Feather"]=self.parent.plot.fplot.plot(pf.feather, pen=(255, 80, 125))
         else:
             #print dir(self.plotitem["Predicted Feather"])
-            self.parent.plot.plotter.removeItem(self.plotitem["Predicted Feather"])
+            self.parent.plot.fplot.removeItem(self.plotitem["Predicted Feather"])
             #for i in self.parent.plot.plotter.legend.items:
             #    print dir(i)
         

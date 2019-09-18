@@ -50,21 +50,38 @@ class DateAxis(AxisItem):
         return strns
 
 
-class Plotter(GraphicsLayoutWidget):
+class Plotter(GraphicsWindow):
     def __init__(self,parent=None):
         super(Plotter,self).__init__(parent=None,border=(100, 100, 100))
         self.setBackground((0,0,0))
         self.dateutil = DateUtility()
         xaxis = DateAxis(orientation='bottom')
-        self._plt = self.addPlot(row=0,col=0,axisItems={'bottom':xaxis})
+        fxaxis = DateAxis(orientation='bottom')
+
+        self._plt = self.addPlot(row=0,col=0,title="Tide and Current",axisItems={'bottom':xaxis})
         self._plt.addLegend()
-        self._plt.setLabel("left", "Degrees Relative to Orientation")
+        self._plt.setLabel("left", "Magnitude")
+        pg = GridItem()
+        #self._plt.addItem(pg)
+
+        self._fplot = self.addPlot(row=1,col=0,title="Predicted Data",axisItems={'bottom':fxaxis})
+        self._fplot.addLegend()
+        fg = GridItem()
+        self._fplot.addItem(fg)
+        #self._fplot.showGrid(x=True, y=True)
+        self._plt.showGrid(x=True, y=True)
+
+        self._fplot.setLabel("left","Feather Angle")
         self.region = LinearRegionItem()
         self._plt.addItem(self.region, ignoreBounds=True)
         self.region.setZValue(10)
         self.todaymark = InfiniteLine(angle=90,movable=False, pos=(self.dateutil.currentepoch()),name="Now", pen="g")
+        self.todaytide = InfiniteLine(angle=90,movable=False, pos=(self.dateutil.currentepoch()),name="Now", pen="y")
         self.todaymark.setFocus()
+        self.todaytide.setFocus()
+
         self._plt.addItem(self.todaymark,ignoreBounds=True)
+        self._fplot.addItem(self.todaytide, ignoreBounds=True)
         self.region.setRegion([int(self.dateutil.currentepoch()-7200),int(self.dateutil.currentepoch()+36000)])
         self.timer = QTimer()
         self.timer.timeout.connect(self.updateUI)
@@ -74,19 +91,19 @@ class Plotter(GraphicsLayoutWidget):
         
         self._plt.sigRangeChanged.connect(self.updateRegion)
         self._plt.setAutoVisible(y=True)
-        self.label =LabelItem(justify='right')
+        self.label =LabelItem(justify='left')
 
         self._plt.setLabel("bottom", "Time Shift")
-        self._plt.showGrid(x=True,y=True)
+
         self.vLine = InfiniteLine(angle=90, movable=False, pen="r")
         self.hLine = InfiniteLine(angle=0, movable=False, pen="r")
-        self._plt.addItem(self.vLine, ignoreBounds=True)
-        self._plt.addItem(self.hLine, ignoreBounds=True)
+        self._fplot.addItem(self.vLine, ignoreBounds=True)
+        self._fplot.addItem(self.hLine, ignoreBounds=True)
         self.addItem(self.label)
-        self.vb = self._plt.vb
+        self.vb = self._fplot.vb
         self.region.sigRegionChanged.connect(self.update)
         self.region.setRegion([int(self.dateutil.currentepoch()-18000),int(self.dateutil.currentepoch()+18000)])
-        self._plt.scene().sigMouseMoved.connect(self.mouseMoved)
+        self._fplot.scene().sigMouseMoved.connect(self.mouseMoved)
         self._plt.setXRange(int(self.dateutil.currentepoch()),int(self.dateutil.currentepoch()+18000), padding=0) 
     def updateRegion(self, window, viewRange):
         rgn = viewRange[0]
@@ -95,11 +112,11 @@ class Plotter(GraphicsLayoutWidget):
         #pos = evt  ## using signal proxy turns original arguments into a tuple
         
         
-        if self._plt.sceneBoundingRect().contains(evt):
+        if self._fplot.sceneBoundingRect().contains(evt):
             mousePoint = self.vb.mapSceneToView(evt)
             index = int(mousePoint.x())
             lbl =""
-            for n,it in enumerate(self._plt.items):
+            for n,it in enumerate(self._fplot.items):
                 
                 if type(it) == PlotDataItem:
                     #print type(it)
@@ -108,20 +125,29 @@ class Plotter(GraphicsLayoutWidget):
                            lbl = lbl+" %0.1f" % (it.getData()[1][index])
                         except:
                             lbl=lbl
-            self.label.setText("<span style='font-size: 12pt'>x=%0.1f</span><br/><span style='font-size: 12pt;color: red'>y=%0.1f</span>" % (mousePoint.x(), mousePoint.y()))
+            self.label.setText("<span style='font-size: 12pt'>Time %s</span><br/><span style='font-size: 12pt;color: red'>Angle %0.1f</span>" % (self.dateutil.tohour(mousePoint.x()), mousePoint.y()))
             #if index > 0 and index < len(data1):
             #    self.label.setText("<span style='font-size: 12pt'>x=%0.1f,   <span style='color: red'>y1=%0.1f</span>,   <span style='color: green'>y2=%0.1f</span>" % (mousePoint.x(), data1[index], data2[index]))
             self.vLine.setPos(mousePoint.x())
             self.hLine.setPos(mousePoint.y())
     def updateUI(self):
         self.todaymark.setPos(self.dateutil.currentepoch())
+        self.todaytide.setPos(self.dateutil.currentepoch())
     def update(self):
         self.region.setZValue(10)
         minX, maxX = self.region.getRegion()
-
+        self.fplot.setXRange(minX, maxX, padding=0)
+        
     @property
-    def plotter(self):
+    def xaxis(self):
+        ax = DateAxis(orientation='bottom')
+        return ax
+    @property
+    def rawplot(self):
         return self._plt
+    @property
+    def fplot(self):
+        return self._fplot
     def clearPlot(self):
         pass
 

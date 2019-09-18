@@ -28,12 +28,25 @@ class DataSource(QDialog):
     ReadDone = pyqtSignal
     constituent = {}
     params = const.defaultparams # Data defined in lib.constant
-    dsplot ={}
+    datasourceplot ={}
+    predictionplot={}
     def __init__(self,parent = None ):
         QDialog.__init__(self,parent)
         self.parent = parent
         self.datehandler = DateUtility(year=1980,month=6,day=1)
         self.np = np
+        self.plotparent = self.parent.plot
+
+        self.tideplot = self.plotparent.rawplot
+        self.predplot = self.plotparent.fplot
+
+        self.tideplot.enableAutoRange('xy', 0.95)
+        self.tideplot.legend.items = []
+
+
+        self.predplot.enableAutoRange('xy', 0.95)
+        self.predplot.legend.items = []
+
 
         self.config = ConfigObj(infile='./config/datasource.conf', indent_type='    ')
         #self.storage = shelve.open('./data/{}_Storage'.format(self.id))
@@ -210,12 +223,16 @@ class DataSource(QDialog):
     def results(self):
         return self.__data
     def clearplot(self):
-        for v in self.dsplot.values():
+        for v in self.datasourceplot.values():
             if v:
-                self.parent.plot.plotter.legend.items = []
-                self.parent.plot.plotter.removeItem(v)
-
-        self.dsplot.clear()
+                self.parent.plot.rawplot.legend.items = []
+                self.parent.plot.rawplot.removeItem(v)
+        for v in self.predictionplot.values():
+            if v:
+                self.parent.plot.fplot.legend.items=[]
+                self.parent.plot.fplot.removeItem(v)
+        self.predictionplot.clear()
+        self.datasourceplot.clear()
     def initprediction(self):
         #self.clearplot()
         self.predict()

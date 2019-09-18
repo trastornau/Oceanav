@@ -73,26 +73,19 @@ class ADCPDB(DataSource):
         # Plotting block
         #self.parent.plot.clear()
         #p0 = self.parent.plot.addPlot(row=0,col=0,axisItems={'bottom':self.parent.xaxis})
-        vp = self.parent.plot
-        p0=vp.plotter
-        p0.enableAutoRange('xy', 0.95)
-        p0.legend.items = []
-        p0.setLabel("bottom", "Time Shifted by {:02d}:{:02d} mins".format(*divmod(int(pt.shift), 60))) #'{:02d}:{:02d}'.format(*divmod(minutes, 60))'02:15'
-        p0.setLabel("left", "Degrees Relative to Orientation")
+        self.tideplot.setLabel("bottom", "Time Shifted by {:02d}:{:02d} mins".format(*divmod(int(pt.shift), 60))) #'{:02d}:{:02d}'.format(*divmod(minutes, 60))'02:15'
+        self.tideplot.setLabel("left", "Magnitude - Height (tide)")
         #p0.showGrid(x=True,y=True)
 
         rows, cols = pt.feather.shape
         for i in xrange(1,cols,1):
-            self.dsplot['feat{}'.format(i)] = p0.plot(pt.feather[:,0],pt.feather[:,i],pen=(128,255-(255/(i*2)),255),name="Feather {}".format(pt.constituent.keys()[i-1]))
-            self.dsplot['tides{}'.format(i)] = p0.plot(pt.current[:,0],pt.current[:,i],pen=(i*32,255,255/(i*2)),name="Tides at {}".format(pt.constituent.keys()[i-1]))
+            self.predictionplot['feat{}'.format(i)] = self.predplot.plot(pt.feather[:, 0], pt.feather[:, i], brush=((32*i)/2, 60*i, 32*i, 100), fillLevel=0, name="Feather {}".format(pt.constituent.keys()[i - 1]))
+            self.datasourceplot['tides{}'.format(i)] = self.tideplot.plot(pt.current[:, 0], pt.current[:, i], pen=(i * 32, 192, 16), name="Tides at {}".format(pt.constituent.keys()[i - 1]))
         
-        self.dsplot['CurrentMeter']=p0.plot(xmagdata, pen=(125, 100, 25),name="Current Meter")
-        p0.autoRange()
-        p0.setXRange(int(xmagdata[:,0][-1]-18000),int(self.dateutil.currentepoch()+72000), padding=0)
-        #p0.setYRange(int(pt.feather.min()-2),int(pt.feather.max()+2), padding=0) 
-        #p0.setXRange(int(xmagdata[:,0][-1]-18000),int(pt.feather[:,0][-1]+6000), padding=0) 
-        #vp.region.setRegion([int(pt.feather[:,0][-10]-10),int(pt.feather[:,0][-1]+10)])
-
+        self.datasourceplot['CurrentMeter']=self.tideplot.plot(xmagdata, pen=(125, 100, 25), name="Current Meter")
+        self.tideplot.autoRange()
+        self.tideplot.setXRange(int(xmagdata[:,0][-1]-18000),int(self.dateutil.currentepoch()+72000), padding=0)
+        self.plotparent.region.setRegion([int(self.dateutil.currentepoch()-18000),int(self.dateutil.currentepoch()+18000)])
         def worker():
             print('Recalculating..')
         

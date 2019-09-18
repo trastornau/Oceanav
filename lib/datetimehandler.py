@@ -76,7 +76,9 @@ class DateUtility(object):
         
     def todatestr(self, gpsepoc):
         #
-        return datetime.strftime(self.epoch+ timedelta(seconds=int(gpsepoc)) ,"%d/%m/%Y %H:%M:%S")
+        return datetime.strftime(datetime.utcfromtimestamp(gpsepoc) ,"%d/%m/%Y %H:%M:%S")
+    def tohour(self, gpsepoc):
+        return datetime.strftime(datetime.utcfromtimestamp(gpsepoc) ,"%H:%M:%S")
     def currentepoch(self):
         dt = datetime.utcnow() - self.epoch + self.npdiff
         return  (dt.seconds + dt.days * 24 * 3600)
