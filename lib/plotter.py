@@ -108,19 +108,16 @@ class Plotter(GraphicsLayoutWidget):
                            lbl = lbl+" %0.1f" % (it.getData()[1][index])
                         except:
                             lbl=lbl
-            self.label.setText("<span style='font-size: 12pt'>x=%0.1f</span><span style='color: red'>%s</span>" % (mousePoint.x(), lbl))
+            self.label.setText("<span style='font-size: 12pt'>x=%0.1f</span><br/><span style='font-size: 12pt;color: red'>y=%0.1f</span>" % (mousePoint.x(), mousePoint.y()))
             #if index > 0 and index < len(data1):
             #    self.label.setText("<span style='font-size: 12pt'>x=%0.1f,   <span style='color: red'>y1=%0.1f</span>,   <span style='color: green'>y2=%0.1f</span>" % (mousePoint.x(), data1[index], data2[index]))
             self.vLine.setPos(mousePoint.x())
             self.hLine.setPos(mousePoint.y())
     def updateUI(self):
         self.todaymark.setPos(self.dateutil.currentepoch())
-        #print self.todaymark.getPos()
     def update(self):
         self.region.setZValue(10)
         minX, maxX = self.region.getRegion()
-        #self._plt.setXRange(minX, maxX, padding=0)    
-
 
     @property
     def plotter(self):

@@ -21,7 +21,7 @@ class ADCPDB(DataSource):
     params = {'depth':15,
               'scale':1,
               'orientation':24.0,
-              'days to predict':14,
+              'days to predict':3,
               'vessel speed':4.3,
               'streamer':8000.0,
               'shift':0.0

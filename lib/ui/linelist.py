@@ -16,7 +16,7 @@ class LineFeather(QTableWidget):
     params = {'depth':15,
               'scale':-0.15,
               'orientation':24,
-              'days to predict':20,
+              'days to predict':3,
               'vessel speed':4.3,
               'streamer':8000.0,
               'shift':0.0
@@ -86,8 +86,7 @@ class LineFeather(QTableWidget):
             self.forpredict[val]=""
             with open(val) as f:
                 lines=f.readlines()
-
-                feather =np.loadtxt(lines,delimiter=',',skiprows=1)
+                feather=np.loadtxt(lines,delimiter=',',skiprows=1)
                 row,col = feather.shape
                 preplot = feather[1,0]
                 xax = feather[:,2] + self.dateutil.npdiff.total_seconds()
