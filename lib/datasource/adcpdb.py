@@ -79,8 +79,8 @@ class ADCPDB(DataSource):
 
         rows, cols = pt.feather.shape
         for i in xrange(1,cols,1):
-            self.predictionplot['feat{}'.format(i)] = self.predplot.plot(pt.feather[:, 0], pt.feather[:, i], brush=((32*i)/2, 60*i, 32*i, 100), fillLevel=0, name="Feather {}".format(pt.constituent.keys()[i - 1]))
-            self.datasourceplot['tides{}'.format(i)] = self.tideplot.plot(pt.current[:, 0], pt.current[:, i], pen=(i * 32, 192, 16), name="Tides at {}".format(pt.constituent.keys()[i - 1]))
+            self.predictionplot['feat{}'.format(i)] = self.predplot.plot(pt.feather[:, 0], pt.feather[:, i], brush=((60*i), 32, 60*i, 100), pen=((32*i), (32*2*i), 172), fillLevel=0, name="Feather {}".format(pt.constituent.keys()[i - 1]))
+            self.datasourceplot['tides{}'.format(i)] = self.tideplot.plot(pt.current[:, 0], pt.current[:, i], pen=(i * 32, 255/i, 16), name="Tides at {}".format(pt.constituent.keys()[i - 1]))
         
         self.datasourceplot['CurrentMeter']=self.tideplot.plot(xmagdata, pen=(125, 100, 25), name="Current Meter")
         self.tideplot.autoRange()

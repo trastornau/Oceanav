@@ -15,8 +15,12 @@ class DataSourceController(QWidget):
         ds =  [dsc(parent=parent) for dsc in datasource.DataSource.__subclasses__()]
 
         self._datasource = {}
+        self._checklist ={}
         self.pluginparamlayout = QVBoxLayout()
         self.container = QVBoxLayout()
+        self.dslistbox = QListWidget(self)
+        #self.dslistbox.setFlags(self.dslistbox.flags() | Qt.ItemIsUserCheckable)
+        #self.dslistbox.setCheckState(QtCore.Qt.Unchecked)
         self.dscheckbox = QComboBox()
         self.paramgb = QGroupBox("Prediction Parameters:")
         self.paramgb.setLayout(self.pluginparamlayout)
@@ -24,10 +28,16 @@ class DataSourceController(QWidget):
 
         for dso in ds:
             self._datasource[dso.name] = dso
+            self._checklist[dso.name]= QListWidgetItem()
+            self._checklist[dso.name].setText(dso.name)
+            self._checklist[dso.name].setFlags(self._checklist[dso.name].flags() | Qt.ItemIsUserCheckable)
+            self._checklist[dso.name].setCheckState(Qt.Unchecked)
             self.dscheckbox.addItem(dso.name)
+            self.dslistbox.addItem(self._checklist[dso.name])
             self.parent.importerlayout.addWidget(dso.importer)
 
         self.container.addWidget(self.dscheckbox)
+        self.container.addWidget(self.dslistbox)
         self.setLayout(self.container)
     def clearplot(self):
         for v in self.getmember.values():

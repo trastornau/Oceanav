@@ -1,18 +1,16 @@
 import  math
 import  os
 import  shelve
+import numpy as np
 from configobj import ConfigObj
 from subprocess import Popen, PIPE, call
 from lib.ui.formwidget import *
 from lib.datetimehandler import DateUtility
 #TODO Need to be removed after implementation dscontroller finised
-
 from lib import  constant as const
 from lib.datetimehandler import DateUtility
 from PyQt4.QtCore import pyqtSignal, QThread, QProcess
-from PyQt4.Qt import *
-import numpy as np
-
+from PyQt4.QtGui import *
 
 class DataSource(QDialog):
     id="generic"
@@ -33,7 +31,7 @@ class DataSource(QDialog):
     def __init__(self,parent = None ):
         QDialog.__init__(self,parent)
         self.parent = parent
-        self.datehandler = DateUtility(year=1980,month=6,day=1)
+        self.datehandler = DateUtility(year=1980,month=1,day=6)
         self.np = np
         self.plotparent = self.parent.plot
 
@@ -44,7 +42,7 @@ class DataSource(QDialog):
         self.tideplot.legend.items = []
 
 
-        self.predplot.enableAutoRange('xy', 0.95)
+        self.predplot.enableAutoRange('xy', 0.85)
         self.predplot.legend.items = []
 
 

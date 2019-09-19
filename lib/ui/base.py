@@ -88,7 +88,9 @@ class MainWindow(QMainWindow):
         gblayout.addWidget(self.datasource.dscheckbox)
         for i in self.constcheck.values():
             gblayout.addWidget(i)
+        gblayout.addWidget(self.datasource.dslistbox)
         gblayout.addWidget(self.datasource.paramgb)
+
         gblayout.addWidget(self.btntrigger)
         gb.setLayout(gblayout)
         return gb
