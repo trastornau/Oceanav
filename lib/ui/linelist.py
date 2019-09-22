@@ -157,10 +157,9 @@ class LineFeather(QTableWidget):
             pf.days = self.params['days to predict']
             pf.vesselspeed = self.params['vessel speed']
             pf.shift = self.getshift()
-            pf.addConstituent({'FeatherPredict': 'M2 S2 K1 O1 F4 F6'})
-            pf.recompute()
-            
-            
+            pf.addConstituent({'FeatherPredict': 'M2 S2 K1'})
+            pf.recompute() 
+            #print pf.feather
             self.plotitem["Predicted Feather"]=self.parent.plot.fplot.plot(pf.feather, pen=(255, 80, 125))
         else:
             #print dir(self.plotitem["Predicted Feather"])

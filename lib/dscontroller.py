@@ -19,6 +19,7 @@ class DataSourceController(QWidget):
         self.pluginparamlayout = QVBoxLayout()
         self.container = QVBoxLayout()
         self.dslistbox = QListWidget(self)
+        self.dslistbox.setMaximumHeight(100)
         #self.dslistbox.setFlags(self.dslistbox.flags() | Qt.ItemIsUserCheckable)
         #self.dslistbox.setCheckState(QtCore.Qt.Unchecked)
         self.dscheckbox = QComboBox()

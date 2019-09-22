@@ -54,6 +54,8 @@ class Plotter(GraphicsWindow):
     def __init__(self,parent=None):
         super(Plotter,self).__init__(parent=None,border=(100, 100, 100))
         self.setBackground((0,0,0))
+        self.setMinimumHeight(980)
+        #self.sizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
         self.dateutil = DateUtility()
         xaxis = DateAxis(orientation='bottom')
         fxaxis = DateAxis(orientation='bottom')

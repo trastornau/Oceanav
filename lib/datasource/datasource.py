@@ -20,6 +20,7 @@ class DataSource(QDialog):
     datapath = "./data"
     datasource = "./data"
     bypassdialog = False
+    constituent_required=False
     _data = {}
     form_spec = {}
     controlarray = []
@@ -34,18 +35,16 @@ class DataSource(QDialog):
         self.datehandler = DateUtility(year=1980,month=1,day=6)
         self.np = np
         self.plotparent = self.parent.plot
-
+        self.plotparent.setMinimumHeight(1000)
+        self.predictionlayout = QFormLayout()
         self.tideplot = self.plotparent.rawplot
         self.predplot = self.plotparent.fplot
+        self.predplot.setMinimumHeight(500)
 
         self.tideplot.enableAutoRange('xy', 0.95)
         self.tideplot.legend.items = []
-
-
         self.predplot.enableAutoRange('xy', 0.85)
         self.predplot.legend.items = []
-
-
         self.config = ConfigObj(infile='./config/datasource.conf', indent_type='    ')
         #self.storage = shelve.open('./data/{}_Storage'.format(self.id))
         self.path = os.path.join(self.datapath, self.id)
@@ -78,7 +77,6 @@ class DataSource(QDialog):
         cnc = QPushButton("Cancel")
         cnc.clicked.connect(self.idialog.close)
         self.ilayout.addRow(ok, cnc)
-
         self.populatedialog()
         self.actions = self.act
         self.options = {}
@@ -164,17 +162,14 @@ class DataSource(QDialog):
         return frame
 
     def populatedialog(self):
-        di_layout = QFormLayout()
-        di_layout.addRow(QLabel("To generate prediction data, please click Predict button bellow!"))
-        self.customPredictionDialog(di_layout)
+        self.predictionlayout.addRow(QLabel("To generate prediction data, please click Predict button bellow!"))
+        self.customPredictionDialog(self.predictionlayout)
         proc_button = QPushButton("Predict")
         proc_button.clicked.connect(self.initprediction)
         cancel_button = QPushButton("Cancel")
         cancel_button.clicked.connect(self.dialog.close)
-
-
-        di_layout.addRow(cancel_button, proc_button)
-        self.dialog.setLayout(di_layout)
+        self.predictionlayout.addRow(cancel_button, proc_button)
+        self.dialog.setLayout(self.predictionlayout)
     def generateInitialConfig(self):
         __lay = QFormLayout()
         for inp in self.form_spec.items():
@@ -190,7 +185,6 @@ class DataSource(QDialog):
         self.options = options
         self.updateParams()
         if self.bypassdialog:
-
             self.initprediction()
         else:
             self.dialog.show()

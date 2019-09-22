@@ -1,5 +1,5 @@
 from PyQt4.QtCore import (Qt)
-from PyQt4.QtGui import  *
+from PyQt4.QtGui import QMessageBox
 from PyQt4.Qt import *
 from lib.pyqtgraph import *
 from lib.dscontroller import *
@@ -72,13 +72,23 @@ class MainWindow(QMainWindow):
     def setPlugins(self,pluginarray=[]):
         self.plugins = pluginarray
     def btntrigger_click(self):
-         self.datasource.selected.constituent = {}
-         self.datasource.clearplot()
-         for k,v in self.constcheck.items():
-             if self.constcheck[k].isChecked():
-                 self.datasource.selected.constituent[k] = self.__config['constituent'][str(v.text())]
+        if self.datasource.selected.constituent_required:
 
-         if len(self.datasource.selected.constituent.keys()) != 0:
+            self.datasource.selected.constituent = {}
+            self.datasource.clearplot()
+            for k,v in self.constcheck.items():
+                if self.constcheck[k].isChecked():
+                    self.datasource.selected.constituent[k] = self.__config['constituent'][str(v.text())]
+
+            if len(self.datasource.selected.constituent.keys()) != 0:
+                self.datasource.selected.bootup()
+            else:
+                msgBox = QMessageBox(QMessageBox.Warning,
+                "No Constituent Selected", "Please Select at least one constituent",
+                QMessageBox.NoButton, self)
+                msgBox.addButton("Save &Again", QMessageBox.AcceptRole)
+                msgBox.addButton("&Continue", QMessageBox.RejectRole)
+        else:
             self.datasource.selected.bootup()
     @property
     def __build_dspanel(self):

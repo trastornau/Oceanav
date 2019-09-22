@@ -121,15 +121,33 @@ class Tidalyse():
             self._shift = shift
         except ValueError:
             print ("Tidalyse shift only accept number")
-    def recompute(self):
-        return  self._compute
-        try:
-            pass
-        except:
-            print "Error Occured"
-            print "Value of self.time\n",self.time
-            print "Value of self.xmag\n",self.xmag
-            print "Value of self.dtime\n",self.dtime
+    @property
+    def _computegeneric(self):
+        name = "generic"
+        self.tidedata ={}
+        self.predictiondata={}
+        self.last_time = np.max(self.epochlist)
+        t0 = self.time.tolist()[0]
+        self.dateutil.add(t0)
+        hours =(self.prediction_interval * np.arange((self.days+(self.dateutil.currentepoch() - self.dateutil.getgpstime())/86400) * 24 * 10))
+        self.times  = Tide._times(t0, hours)
+        data = Tide.decompose(self.xmag, self.time.tolist())
+        self.tidedata[name] = data
+        pred = self.tidedata[name].at(self.times)
+        self.predictiondata[name] = pred * self.scale
+        return self.predictiondata
+    def recompute(self, ignoreconstituent=False):
+        if not ignoreconstituent:
+            return  self._compute
+            try:
+                pass
+            except:
+                print "Error Occured"
+                print "Value of self.time\n",self.time
+                print "Value of self.xmag\n",self.xmag
+                print "Value of self.dtime\n",self.dtime
+        else:
+            return self._computegeneric
     def addConstituent(self, newconst ={'default':"M2 N2 S2"}):
         self.constituent.clear()
         for k,v in newconst.items():
@@ -205,14 +223,13 @@ class Tidalyse():
     @property
     def tidearray(self):
         c = 1
+
         t = self.__shift_times(self.times,self.shift)
         #dt64 = np.datetime64(np.array(t,dtype='datetime64[ns]'))
         # Store time data back as float epoch np.array(t,dtype='datetime64[s]')
         ts = (
                 t.astype('datetime64[s]')  - np.datetime64('1970-01-01T00:00:00Z')
              ) / np.timedelta64(1, 's')
-
-
         s=len(self.predictiondata.keys()) + 1
         #try:
         el=len(self.predictiondata.values()[0])
@@ -225,23 +242,3 @@ class Tidalyse():
         #except:
         #    print "Value of prediction data\n",self.predictiondata
         #    return np.zeros((2,2),dtype=np.float)
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -16,6 +16,8 @@ class ADCPDB(DataSource):
     name = "ADCP Data"
     desc = "ADCP Current Meter data Processor"
     version = "1.0"
+    datapath = "./data"
+    constituent_required = True
     bypassdialog = True
     sourcetype = "FILE"
     params = {'depth':15,
@@ -33,7 +35,7 @@ class ADCPDB(DataSource):
         self.data  = None
     def importData(self):
         options = QFileDialog.DontResolveSymlinks | QFileDialog.ShowDirsOnly
-        directory = QFileDialog.getExistingDirectory(self,"Select ADCP SUM folder..",options=options)
+        directory = QFileDialog.getExistingDirectory(self,"Select ADCP SUM folder..",self.datapath, options=options)
         if directory:
             self.datasource  = os.path.normpath(str(directory))
             thread = Thread(target=self.processdata)
